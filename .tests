@@ -1,0 +1,54 @@
+#Define module specific tests here
+
+
+98_libadore_unit_tests_test(){
+    local action=test
+    local name="libadore unit tests"
+    local description="runs the libadore unit tests"
+    local message=""
+    local exit_code=0
+    printf "\n"
+    printf "  Test: %s\n" "${name}"
+    printf "    Description: %s\n" "${description}"
+    if make test > /dev/null 2>&1; then
+        message="libadore unit tests passed"
+        printf "    Message: %s\n" "${message}" 
+        status=$(bold $(green "PASSED")) 
+        printf "    Status: %s: %s\n" "${action}" "${status}" 
+    else
+        message="libadore unit tests failed"
+        printf "    Message: %s\n" "${message}"
+        status=$(bold $(red "FAILED"))
+        printf "    Status: %s\n" "${status}"
+        exit 1
+    fi
+
+}
+
+99_libadore_unit_tests_logfile_test(){
+    local action=test
+    local name="libadore unit tests logfile test"
+    local description="Checks if a unit test logfile was generated"
+    local message=""
+    local exit_code=0
+    
+    local unit_test_log_file="libadore/build/ctest.log"
+
+    printf "\n"
+    printf "  Test: %s\n" "${name}"
+    printf "    Description: %s\n" "${description}"
+
+    if [[ -f "${unit_test_log_file}" ]]; then
+        message="libadore unit test log file exists: ${unit_test_log_file}"
+        printf "    Message: %s\n" "${message}" 
+        status=$(bold $(green "PASSED")) 
+        printf "    Status: %s: %s\n" "${action}" "${status}" 
+    else
+        message="libadore unit test log file does not exist: ${unit_test_log_file}"
+        printf "    Message: %s\n" "${message}"
+        status=$(bold $(red "FAILED"))
+        printf "    Status: %s\n" "${status}"
+    fi
+}
+
+

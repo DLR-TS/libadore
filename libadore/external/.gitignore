@@ -1,0 +1,4 @@
+*/build
+**/build
+Catch2/build
+*.tar
