@@ -3,26 +3,31 @@
     url = git@github.com:dlr-ts/xodr
     ignore = untracked
     shallow = true
+    update = none
 [submodule "libadore/external/csaps-cpp"]
 	path = libadore/external/csaps-cpp
 	url = git@github.com:dlr-ts/csaps-cpp
     ignore = untracked
     shallow = true
+    update = none
 [submodule "libadore/external/dlib"]
 	path = libadore/external/dlib
 	url = git@github.com:davisking/dlib
     ignore = untracked
     shallow = true
+    update = none
 [submodule "libadore/external/osqp"]
 	path = libadore/external/osqp
 	url = git@github.com:osqp/osqp
     ignore = untracked
     shallow = true
+    update = none
 [submodule "libadore/external/qpOASES"]
 	path = libadore/external/qpOASES
 	url = git@github.com:coin-or/qpOASES
     ignore = untracked
     shallow = true
+    update = none
 [submodule "cppcheck_docker"]
 	path = cppcheck_docker
 	url = git@github.com:DLR-TS/cppcheck_docker.git
@@ -40,7 +45,7 @@
 	url = git@github.com:DLR-TS/lizard_docker.git
 	branch = master
     ignore = untracked
-    shallow = true
+shallow = true
 [submodule "make_gadgets"]
 	path = make_gadgets
 	url = git@github.com:DLR-TS/make_gadgets.git
@@ -50,6 +55,9 @@
 [submodule "libadore/external/Catch2"]
 	path = libadore/external/Catch2
 	url = git@github.com:catchorg/Catch2
+    update = none
 [submodule "ci_teststand"]
 	path = ci_teststand
 	url = git@github.com:DLR-TS/ci_teststand.git
+    ignore = untracked
+    shallow = true
