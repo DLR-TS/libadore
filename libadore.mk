@@ -62,8 +62,4 @@ branch_libadore: ## Returns the current docker safe/sanitized branch for libador
 image_libadore: ## Returns the current docker image name for libadore
 	@printf "%s\n" ${LIBADORE_IMAGE}
 
-.PHONY: update_libadore
-update_libadore:
-	cd "${LIBADORE_MAKEFILE_PATH}" && git pull
-
 endif

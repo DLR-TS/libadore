@@ -72,7 +72,7 @@ test: set_env ## run libadore unit tests
 
 .PHONY: build_external 
 build_external: ## builds all libadore external libraries 
-	cd "${ROOT_DIR}/libadore/external/" && make
+	cd "${ROOT_DIR}/libadore/external/" && make build
 
 .PHONY: clean_external 
 clean_external: ## clean all libadore external libraries
