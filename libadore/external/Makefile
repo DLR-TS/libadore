@@ -2,8 +2,6 @@ SHELL:=/bin/bash
 
 .DEFAULT_GOAL := all
 
-.PHONY: build
-
 MAKEFLAGS += --no-print-directory
 
 ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
