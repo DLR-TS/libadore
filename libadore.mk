@@ -62,4 +62,10 @@ branch_libadore: ## Returns the current docker safe/sanitized branch for libador
 image_libadore: ## Returns the current docker image name for libadore
 	@printf "%s\n" ${LIBADORE_IMAGE}
 
+.PHONY: images_libadore
+images_libadore: ## Returns all docker images for libadore
+	@printf "%s\n" ${LIBADORE_PROJECT}:${LIBADORE_TAG}
+	@printf "%s\n" ${LIBADORE_PROJECT}_build:${LIBADORE_TAG}
+	@printf "%s\n" ${LIBADORE_PROJECT}_test:${LIBADORE_TAG}
+
 endif
