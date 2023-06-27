@@ -1,5 +1,4 @@
 build-essential
-cmake
 pkg-config
 libx11-dev
 libatlas-base-dev

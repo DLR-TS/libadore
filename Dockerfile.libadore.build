@@ -5,7 +5,7 @@ FROM qpoases:latest as qpOASES
 FROM dlib:v19.24 as dlib
 FROM xodr:latest as xodr
 FROM catch2:v2.10.2 as Catch2
-
+FROM osqp:latest as osqp
 
 FROM ubuntu:20.04 as libadore_requirements_base
 
@@ -60,6 +60,14 @@ RUN cmake .. > /dev/null 2>&1 || true && \
 
 ARG LIB=qpOASES
 COPY --from=qpOASES /tmp/${LIB} ${LIBADORE_EXTERNAL_LIBRARY_DIRECTORY}/${LIB}
+WORKDIR /tmp
+RUN ln -s ${LIBADORE_EXTERNAL_LIBRARY_DIRECTORY}/${LIB}/ ${LIB}
+WORKDIR ${LIBADORE_EXTERNAL_LIBRARY_DIRECTORY}/${LIB}/build
+RUN cmake .. > /dev/null 2>&1 || true && \
+    cmake --install . --prefix ${INSTALL_PREFIX} 
+
+ARG LIB=osqp
+COPY --from=osqp /tmp/${LIB} ${LIBADORE_EXTERNAL_LIBRARY_DIRECTORY}/${LIB}
 WORKDIR /tmp
 RUN ln -s ${LIBADORE_EXTERNAL_LIBRARY_DIRECTORY}/${LIB}/ ${LIB}
 WORKDIR ${LIBADORE_EXTERNAL_LIBRARY_DIRECTORY}/${LIB}/build

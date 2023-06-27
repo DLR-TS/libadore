@@ -18,7 +18,7 @@
     update = none
 [submodule "libadore/external/osqp"]
 	path = libadore/external/osqp
-	url = git@github.com:osqp/osqp
+	url = https://github.com/osqp/osqp.git
     ignore = untracked
     shallow = true
     update = none
