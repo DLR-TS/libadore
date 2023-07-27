@@ -64,7 +64,7 @@ build_fast_qpOASES:
 	@if [ -n "$$(docker images -q ${QPOASES_TAG})" ]; then \
         echo "Docker image: ${QPOASES_TAG} already build, skipping build."; \
     else \
-        make build_xodr;\
+        make build_qpOASES;\
     fi
 
 .PHONY: build_dlib

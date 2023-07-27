@@ -14,7 +14,8 @@ you would like to build in the `.gitmodules` file.
 
 > **ℹ️ INFO:**
 > External library submodues are disabled and will not be pulled. Enable them
-> by modifying the `.gitmodules` and invoking 'git submodue update --init'.
+> by modifying the `.gitmodules` and invoking 'git submodue update --init --recursive'.
+> `make build_<some lib>` will fail without cloning submodules.
 
 > **ℹ️ INFO:**
 > By default external libraries are not built. They are sourced as pre-compiled
