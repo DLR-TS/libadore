@@ -77,6 +77,8 @@ namespace adore
             adore::fun::AFactory::TForceLanechangeLeftReader* force_langechange_left_reader_; // get signals about lanechange suppression
             adore::fun::AFactory::TForceLanechangeRightReader* force_langechange_right_reader_; // get signals about lanechange suppression
             adore::fun::AFactory::TForceSlowManeuversReader* force_slow_maneuvers_reader_; // get signals about lanechange suppression
+            adore::fun::AFactory::THaltAutomationReader* halt_automation_reader_; // get signals about halting automation processing
+            bool halt_automation_;
 
           public:
             adore::fun::EvaluatorWeightedSum* getEvaluator(){return &evaluator_;}

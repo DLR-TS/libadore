@@ -67,6 +67,7 @@ namespace adore
       typedef adore::mad::AReader<bool> TForceLanechangeLeftReader; 
       typedef adore::mad::AReader<bool> TForceLanechangeRightReader; 
       typedef adore::mad::AReader<bool> TForceSlowManeuversReader;
+      typedef adore::mad::AReader<bool> THaltAutomationReader;
 
 
 		  public:
@@ -139,7 +140,9 @@ namespace adore
       //read force lanechange right msgs
       virtual TForceLanechangeRightReader* getForceLanechangeRightReader()=0; 
       //read force slow maneuvers msgs
-      virtual TForceSlowManeuversReader* getForceSlowManeuversReader()=0; 
+      virtual TForceSlowManeuversReader* getForceSlowManeuversReader()=0;
+      //read halt automation msgs
+      virtual THaltAutomationReader* getHaltAutomationReader()=0;
     };
 
 
