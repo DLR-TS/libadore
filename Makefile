@@ -69,6 +69,7 @@ test: set_env ## run libadore unit tests
 	@if grep -q "Errors while running CTest" "libadore/build/ctest.log"; then \
             exit 1; \
      fi;
+	mv libadore/build/ctest.log libadore/build/libadore_ctest.log
 
 .PHONY: build_external 
 build_external: ## builds all libadore external libraries 
