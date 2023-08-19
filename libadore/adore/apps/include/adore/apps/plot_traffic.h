@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2017-2020 German Aerospace Center (DLR). 
+ * Copyright (C) 2017-2023 German Aerospace Center (DLR). 
  * Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
  *
  * This program and the accompanying materials are made available under the 
@@ -41,12 +41,15 @@ namespace adore
       // adore::env::VehicleMotionState9d position_;
 
       std::string prefix_;
+      std::string app_tag_;
 
       public:
       PlotTraffic(DLR_TS::PlotLab::AFigureStub* figure, std::string prefix, bool debug_plot_ids) :
         figure_(figure), prefix_(prefix), debug_plot_ids_(debug_plot_ids)
       {
         trafficReader_ = adore::env::EnvFactoryInstance::get()->getTrafficParticipantSetReader();
+        app_tag_ = "/traffic/";
+        figure_->erase_similar(app_tag_); //remove plotted content from other instances of this app
       }
 
       ~PlotTraffic()
@@ -79,7 +82,7 @@ namespace adore
             pos(1) = pos(1) + sin(psi)*(-0.5*abcd+d);
               
             std::stringstream ss;
-            ss<<prefix_<<"/traffic/"<<tp.getTrackingID();
+            ss<<prefix_<<app_tag_<<tp.getTrackingID();
             plotPosition(ss.str(),pos(0),pos(1),psi,L,c,d,w*0.5,tp.getVx(),tp.getVy(),"LineColor=0,0,0",tp.getClassification(),tp.getTrackingID(),tp.getStationID());
           }
 

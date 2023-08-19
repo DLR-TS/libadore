@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2017-2020 German Aerospace Center (DLR).
+ * Copyright (C) 2017-2023 German Aerospace Center (DLR).
  * Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
  *
  * This program and the accompanying materials are made available under the
@@ -120,6 +120,8 @@ namespace adore
 			virtual TPlanningResultFeed* getPlanningResultFeed()=0;
 			///writes PlanningResult for maneuver selected for execution
 			virtual TPlanningResultWriter* getPlanningSelectWriter()=0;
+      ///reads selected PlanningResult as general information about decision-making and planning performance
+			virtual TPlanningResultFeed* getPlanningSelectFeed()=0;
 			///writes PlanningRequest to orchestrate multiple trajectory planners
 			virtual TPlanningRequestWriter* getPlanningRequestWriter()=0;
       ///allows to trigger planning, when planning request is received
