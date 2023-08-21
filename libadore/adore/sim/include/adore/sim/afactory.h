@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2017-2020 German Aerospace Center (DLR). 
+ * Copyright (C) 2017-2023 German Aerospace Center (DLR). 
  * Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
  *
  * This program and the accompanying materials are made available under the 
@@ -25,6 +25,7 @@
 #include <adore/fun/vehicleextendedstate.h>
 #include <adore/sim/resetvehiclepose.h>
 #include <adore/sim/resetvehicletwist.h>
+#include <adore/sim/resetvehicledimensions.h>
 #include <adore/env/traffic/participant.h>
 
 #include <adore/env/tcd/trafficlight.h>
@@ -55,6 +56,8 @@ namespace adore
 			typedef adore::mad::AWriter<adore::sim::ResetVehicleTwist> TVehicleTwistResetWriter;
 			typedef adore::mad::AFeed<int64_t> TSimulationIDResetFeed;
 			typedef adore::mad::AFeed<int64_t> TV2XStationIDResetFeed;
+			typedef adore::mad::AWriter<adore::sim::ResetVehicleDimensions> TVehicleDimensionsResetWriter;
+			typedef adore::mad::AFeed<adore::sim::ResetVehicleDimensions> TVehicleDimensionsResetFeed;
 			typedef adore::mad::AWriter<adore::env::traffic::TParticipantSet> TParticipantSetWriter;
 			typedef adore::mad::AWriter<adore::env::traffic::Participant> TParticipantWriter;
 			typedef adore::mad::AFeed<adore::env::traffic::Participant> TParticipantFeed;
@@ -97,6 +100,10 @@ namespace adore
 			virtual TSimulationIDResetFeed* getSimulationIDResetFeed() = 0;
 			///read simulation commands for v2x station id resetting
             virtual TV2XStationIDResetFeed* getV2XStationIDResetFeed() = 0;
+			///write simulation command for vehicle dimensions resetting
+			virtual TVehicleDimensionsResetWriter* getVehicleDimensionsResetWriter(std::string ns) = 0;
+			///read simulation commands for vehicle dimensions resetting
+			virtual TVehicleDimensionsResetFeed* getVehicleDimensionsResetFeed() = 0;
 			///send simulated sensor data
 			virtual TParticipantSetWriter* getParticipantSetWriter()=0;
 			///send ego state to simulation feed

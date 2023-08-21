@@ -55,7 +55,9 @@ namespace adore
       adore::env::ControlledConnectionSet4Ego checkPointSet_;/**< state of checkPoints in area*/
       adore::env::ConnectionsOnLane* connectionsOnLane_;/** map controlled connections to lane*/
       adore::env::ConnectionsOnLane* checkPointsOnLane_;/** map controlled connections to lane*/
+      protected:
       adore::env::ThreeLaneViewDecoupled three_lanes_;/**<lane-based representation of environment*/
+      private:
       adore::env::DecoupledTrafficPredictionView prediction_;/**<collision detection based representation of traffic*/
       adore::fun::SPRTTCNominal ttcCost_;/**<collision detection based ttc computation*/
       adore::fun::SPRNonCoercive coercion_detection_;/**<collision detection vs expected behavior*/
@@ -138,7 +140,10 @@ namespace adore
       {
         nominal_planner_->setSpeedScale(value);
       }
-
+      void addConstraint(fun::ANominalConstraint* constraint)
+      {
+        nominal_planner_->addConstraint(constraint);
+      }
       void setStopPoint(int value)
       {
         if(value<0)

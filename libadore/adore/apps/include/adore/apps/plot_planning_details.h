@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2017-2020 German Aerospace Center (DLR).
+ * Copyright (C) 2017-2023 German Aerospace Center (DLR).
  * Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
  *
  * This program and the accompanying materials are made available under the
@@ -35,6 +35,7 @@ namespace adore
             double s_lower_bound_clipped_;
             double n_upper_bound_clipped_;
             double n_lower_bound_clipped_;
+            std::string filter_;
             DLR_TS::PlotLab::FigureStubFactory* fig_factory_;
             DLR_TS::PlotLab::AFigureStub* figure_lon1_;
             DLR_TS::PlotLab::AFigureStub* figure_lon2_;
@@ -43,13 +44,14 @@ namespace adore
             adore::mad::AFeed<adore::fun::PlanningResult>* planning_result_feed_;
 
           public:
-            PlanningDetailsPlotter()
+            PlanningDetailsPlotter(std::string filter = "")
               : plot_longitudinal_(true)
               , plot_lateral_(true)
               , s_upper_bound_clipped_(200)
               , s_lower_bound_clipped_(-10)
               , n_upper_bound_clipped_(5)
               , n_lower_bound_clipped_(-5)
+              , filter_(filter)
             {
                 planning_result_feed_ = adore::fun::FunFactoryInstance::get()->getPlanningResultFeed();
                 initialize_plot();
@@ -195,10 +197,14 @@ namespace adore
             }
             void run()
             {
-                fun::PlanningResult latest_planning_result;
-                if (planning_result_feed_->hasNext())
+                while (planning_result_feed_->hasNext())
                 {
-                    planning_result_feed_->getLatest(latest_planning_result);
+                    fun::PlanningResult latest_planning_result;
+                    planning_result_feed_->getNext(latest_planning_result);
+                    if(!filter_.empty() && filter_.find(latest_planning_result.name) == std::string::npos)
+                    {
+                        continue;
+                    }
                     if (latest_planning_result.nominal_maneuver_valid && plot_longitudinal_)
                     {
                         plot_longitudinal_planning_information(latest_planning_result);
