@@ -12,25 +12,25 @@ DOCKER_CONFIG?=
 
 QPOASES_PROJECT=qpOASES
 QPOASES_VERSION=latest
-QPOASES_TAG="$(shell echo $(QPOASES_PROJECT) | tr A-Z a-z):${QPOASES_VERSION}"
+QPOASES_TAG=$(shell echo $(QPOASES_PROJECT) | tr A-Z a-z):${QPOASES_VERSION}
 DLIB_PROJECT=dlib
 DLIB_VERSION=v19.24
-DLIB_TAG="${DLIB_PROJECT}:${DLIB_VERSION}"
-CATCH2_PROJECT="Catch2"
-CATCH2_VERSION="v2.10.2"
-CATCH2_TAG="catch2:${CATCH2_VERSION}"
-OSQP_PROJECT="osqp"
-OSQP_VERSION="latest"
-OSQP_TAG="${OSQP_PROJECT}:${OSQP_VERSION}"
-XODR_PROJECT="xodr"
-XODR_VERSION="latest"
-XODR_TAG="${XODR_PROJECT}:${XODR_VERSION}"
+DLIB_TAG=${DLIB_PROJECT}:${DLIB_VERSION}
+CATCH2_PROJECT=Catch2
+CATCH2_VERSION=v2.10.2
+CATCH2_TAG=catch2:${CATCH2_VERSION}
+OSQP_PROJECT=osqp
+OSQP_VERSION=latest
+OSQP_TAG=${OSQP_PROJECT}:${OSQP_VERSION}
+XODR_PROJECT=xodr
+XODR_VERSION=latest
+XODR_TAG=${XODR_PROJECT}:${XODR_VERSION}
 
-CSAPS_CPP_PROJECT="csaps-cpp"
-CSAPS_CPP_VERSION="latest"
-CSAPS_CPP_TAG="${CSAPS_CPP_PROJECT}:${CSAPS_CPP_VERSION}"
+CSAPS_CPP_PROJECT=csaps-cpp
+CSAPS_CPP_VERSION=latest
+CSAPS_CPP_TAG=${CSAPS_CPP_PROJECT}:${CSAPS_CPP_VERSION}
 
-DOCKER_REPOSITORY="andrewkoerner/adore"
+DOCKER_REPOSITORY=andrewkoerner/adore
 
 EXTERNALS_DOCKER_ARCHIVE="/var/tmp/libadore_externals.tar"
 
@@ -40,7 +40,8 @@ save_docker_images:
 
 .PHONY: load_docker_images
 load_docker_images:
-	@docker load --input "${EXTERNALS_DOCKER_ARCHIVE}" 2>/dev/null || true
+	@echo "Loading docker images for libadore from: ${EXTERNALS_DOCKER_ARCHIVE}"
+	docker load --input ${EXTERNALS_DOCKER_ARCHIVE} 2>/dev/null || true
 
 .PHONY: build_xodr
 build_xodr:
@@ -118,8 +119,9 @@ build_fast_osqp:
         make build_osqp;\
     fi
 
-.PHONY: all
-all:
+
+.PHONY: build_fast
+build_fast:
 	make load_docker_images
 	make docker_pull_fast
 	make build_fast_xodr
@@ -129,6 +131,9 @@ all:
 	make build_fast_Catch2
 	make build_fast_osqp
 	make save_docker_images
+
+.PHONY: all
+all: build_fast
 
 .PHONY: build
 build:
@@ -175,37 +180,51 @@ docker_publish:
 	docker push "${DOCKER_REPOSITORY}:${CATCH2_PROJECT}_${CATCH2_VERSION}"
 
 .PHONY: docker_pull
-docker_pull:
-	docker pull "${DOCKER_REPOSITORY}:${QPOASES_PROJECT}_${QPOASES_VERSION}"
-	docker tag "${DOCKER_REPOSITORY}:${QPOASES_PROJECT}_${QPOASES_VERSION}" "${QPOASES_TAG}"
-	docker rmi "${DOCKER_REPOSITORY}:${QPOASES_PROJECT}_${QPOASES_VERSION}"
+docker_pull_all: docker_pull_qpoases docker_pull_osqp docker_pull_dlib docker_pull_csaps_cpp docker_pull_xodr docker_pull_catch2
 
-	docker pull "${DOCKER_REPOSITORY}:${DLIB_PROJECT}_${DLIB_VERSION}"
-	docker tag "${DOCKER_REPOSITORY}:${DLIB_PROJECT}_${DLIB_VERSION}" "${DLIB_TAG}"
-	docker rmi "${DOCKER_REPOSITORY}:${DLIB_PROJECT}_${DLIB_VERSION}"
+.PHONY: docker_pull_qpoases
+docker_pull_qpoases:
+	docker pull ${DOCKER_REPOSITORY}:${QPOASES_PROJECT}_${QPOASES_VERSION}
+	docker tag ${DOCKER_REPOSITORY}:${QPOASES_PROJECT}_${QPOASES_VERSION} ${QPOASES_TAG}
+	docker rmi ${DOCKER_REPOSITORY}:${QPOASES_PROJECT}_${QPOASES_VERSION}
 
-	docker pull "${DOCKER_REPOSITORY}:${OSQP_PROJECT}_${OSQP_VERSION}"
-	docker tag "${DOCKER_REPOSITORY}:${OSQP_PROJECT}_${OSQP_VERSION}" "${OSQP_TAG}"
-	docker rmi "${DOCKER_REPOSITORY}:${OSQP_PROJECT}_${OSQP_VERSION}"
-	
-	docker pull "${DOCKER_REPOSITORY}:${CSAPS_CPP_PROJECT}_${CSAPS_CPP_VERSION}"
-	docker tag "${DOCKER_REPOSITORY}:${CSAPS_CPP_PROJECT}_${CSAPS_CPP_VERSION}" "${CSAPS_CPP_TAG}"
-	docker rmi "${DOCKER_REPOSITORY}:${CSAPS_CPP_PROJECT}_${CSAPS_CPP_VERSION}"
+.PHONY: docker_pull_osqp
+docker_pull_osqp:
+	docker pull ${DOCKER_REPOSITORY}:${OSQP_PROJECT}_${OSQP_VERSION}
+	docker tag ${DOCKER_REPOSITORY}:${OSQP_PROJECT}_${OSQP_VERSION} ${OSQP_TAG}
+	docker rmi ${DOCKER_REPOSITORY}:${OSQP_PROJECT}_${OSQP_VERSION}
 
-	docker pull "${DOCKER_REPOSITORY}:${XODR_PROJECT}_${XODR_VERSION}"
-	docker tag "${DOCKER_REPOSITORY}:${XODR_PROJECT}_${XODR_VERSION}" "${XODR_TAG}"
-	docker rmi "${DOCKER_REPOSITORY}:${XODR_PROJECT}_${XODR_VERSION}"
 
-	docker pull "${DOCKER_REPOSITORY}:${CATCH2_PROJECT}_${CATCH2_VERSION}"
-	docker tag "${DOCKER_REPOSITORY}:${CATCH2_PROJECT}_${CATCH2_VERSION}" "${CATCH2_TAG}"
-	docker rmi "${DOCKER_REPOSITORY}:${CATCH2_PROJECT}_${CATCH2_VERSION}"
+.PHONY: docker_pull_dlib
+docker_pull_dlib:
+	docker pull ${DOCKER_REPOSITORY}:${DLIB_PROJECT}_${DLIB_VERSION}
+	docker tag ${DOCKER_REPOSITORY}:${DLIB_PROJECT}_${DLIB_VERSION} ${DLIB_TAG}
+	docker rmi ${DOCKER_REPOSITORY}:${DLIB_PROJECT}_${DLIB_VERSION}
+
+.PHONY: docker_pull_csaps_cpp
+docker_pull_csaps_cpp:
+	docker pull ${DOCKER_REPOSITORY}:${CSAPS_CPP_PROJECT}_${CSAPS_CPP_VERSION}
+	docker tag ${DOCKER_REPOSITORY}:${CSAPS_CPP_PROJECT}_${CSAPS_CPP_VERSION} ${CSAPS_CPP_TAG}
+	docker rmi ${DOCKER_REPOSITORY}:${CSAPS_CPP_PROJECT}_${CSAPS_CPP_VERSION}
+
+.PHONY: docker_pull_xodr
+docker_pull_xodr:
+	docker pull ${DOCKER_REPOSITORY}:${XODR_PROJECT}_${XODR_VERSION}
+	docker tag ${DOCKER_REPOSITORY}:${XODR_PROJECT}_${XODR_VERSION} ${XODR_TAG}
+	docker rmi ${DOCKER_REPOSITORY}:${XODR_PROJECT}_${XODR_VERSION}
+
+.PHONY: docker_pull_catch2
+docker_pull_catch2:
+	docker pull ${DOCKER_REPOSITORY}:${CATCH2_PROJECT}_${CATCH2_VERSION}
+	docker tag ${DOCKER_REPOSITORY}:${CATCH2_PROJECT}_${CATCH2_VERSION} ${CATCH2_TAG}
+	docker rmi ${DOCKER_REPOSITORY}:${CATCH2_PROJECT}_${CATCH2_VERSION}
 
 .PHONY: docker_pull_fast
-docker_pull_fast:
-	@[ -n "$$(docker images -q ${QPOASES_TAG})" ] || make docker_pull
-	@[ -n "$$(docker images -q ${DLIB_TAG})" ] || make docker_pull
-	@[ -n "$$(docker images -q ${OSQP_TAG})" ] || make docker_pull
-	@[ -n "$$(docker images -q ${CSAPS_CPP_TAG})" ] || make docker_pull
-	@[ -n "$$(docker images -q ${XODR_TAG})" ] || make docker_pull
-	@[ -n "$$(docker images -q ${CATCH2_TAG})" ] || make docker_pull
+docker_pull_fast: load_docker_images
+	@[ -n "$$(docker images -q '${QPOASES_TAG}')" ] || make docker_pull_qpoases
+	@[ -n "$$(docker images -q '${DLIB_TAG}')" ] || make docker_pull_dlib
+	@[ -n "$$(docker images -q '${OSQP_TAG}')" ] || make docker_pull_osqp
+	@[ -n "$$(docker images -q '${CSAPS_CPP_TAG}')" ] || make docker_pull_csaps_cpp
+	@[ -n "$$(docker images -q '${XODR_TAG}')" ] || make docker_pull_xodr
+	@[ -n "$$(docker images -q '${CATCH2_TAG}')" ] || make docker_pull_catch2
 
