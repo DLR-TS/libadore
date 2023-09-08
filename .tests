@@ -32,7 +32,7 @@
     local message=""
     local exit_code=0
     
-    local unit_test_log_file="libadore/build/ctest.log"
+    local unit_test_log_file="libadore/build/libadore_ctest.log"
 
     printf "\n"
     printf "  Test: %s\n" "${name}"
@@ -43,11 +43,13 @@
         printf "    Message: %s\n" "${message}" 
         status=$(bold $(green "PASSED")) 
         printf "    Status: %s: %s\n" "${action}" "${status}" 
+        exit 0 
     else
         message="libadore unit test log file does not exist: ${unit_test_log_file}"
         printf "    Message: %s\n" "${message}"
         status=$(bold $(red "FAILED"))
         printf "    Status: %s\n" "${status}"
+        exit 1
     fi
 }
 
