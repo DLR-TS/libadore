@@ -32,11 +32,14 @@ CSAPS_CPP_TAG=${CSAPS_CPP_PROJECT}:${CSAPS_CPP_VERSION}
 
 DOCKER_REPOSITORY=andrewkoerner/adore
 
-EXTERNALS_DOCKER_ARCHIVE="/var/tmp/libadore_externals.tar"
+EXTERNALS_DOCKER_DIRECTORY=/var/tmp/docker
+EXTERNALS_DOCKER_ARCHIVE=${EXTERNALS_DOCKER_DIRECTORY}/libadore_externals.tar
 
 .PHONY: save_docker_images
 save_docker_images:
-	@docker save -o "${EXTERNALS_DOCKER_ARCHIVE}" "${QPOASES_TAG}" "${DLIB_TAG}" "${CATCH2_TAG}" "${OSQP_TAG}" "${XODR_TAG}"
+	@mkdir -p ${EXTERNALS_DOCKER_DIRECTORY} && \
+    docker save -o "${EXTERNALS_DOCKER_ARCHIVE}" "${QPOASES_TAG}" "${DLIB_TAG}" "${CATCH2_TAG}" "${OSQP_TAG}" "${XODR_TAG}" && \
+    chgrp -R docker ${EXTERNALS_DOCKER_DIRECTORY} && chmod -R 2775 ${EXTERNALS_DOCKER_DIRECTORY} || true
 
 .PHONY: load_docker_images
 load_docker_images:
