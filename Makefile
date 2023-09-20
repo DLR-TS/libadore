@@ -79,6 +79,10 @@ build_external: ## builds all libadore external libraries
 clean_external_cache: ## clean all libadore external library cache located in /var/tmp. Note: This is never done automatically and must be manually invoked.
 	cd "${ROOT_DIR}/libadore/external/" && make clean_cache
 
+.PHONY: clean_external 
+clean_external: ## clean all libadore external libraries
+	cd "${ROOT_DIR}/libadore/external/" && make clean
+
 
 .PHONY: static_checks
 static_checks: lint lizard cppcheck
