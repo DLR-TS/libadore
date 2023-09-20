@@ -162,6 +162,11 @@ clean:
 	(cd csaps-cpp && make clean) 2>/dev/null || true 
 	(cd xodr && make clean) 2>/dev/null || true 
 
+.PHONY: clean_cache
+clean_cache: 
+	rm "${EXTERNALS_DOCKER_ARCHIVE}" 2> /dev/null || true
+
+
 .PHONY: docker_publish
 docker_publish:
 	docker tag "${QPOASES_TAG}" "${DOCKER_REPOSITORY}:${QPOASES_PROJECT}_${QPOASES_VERSION}"
