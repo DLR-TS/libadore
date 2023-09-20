@@ -56,7 +56,7 @@ clean_libadore: ## Clean libadore build artifacts
 
 .PHONY: clean_external_library_cache
 clean_external_library_cache: ## Clean/delete libadore system wide cache in /var/tmp/docker. Note: this is never done automatically and must be manually invoked. 
-	cd "${LIBADORE_MAKEFILE_PATH}" && make clean
+	cd "${LIBADORE_MAKEFILE_PATH}" && make clean_external_library_cache
 
 .PHONY: branch_libadore
 branch_libadore: ## Returns the current docker safe/sanitized branch for libadore
