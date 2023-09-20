@@ -122,8 +122,15 @@ you would like to build in the `.gitmodules` file.
 > by modifying the `.gitmodules` and invoking 'git submodue update --init'.
 
 > **ℹ️ INFO:**
-> By default external libraries are not built. They are sourced as pre-compiled
-> docker images from docker.io.
+> By default external libraries are not built. They are sourced first from local
+> cache in /var/tmp/docker and seconds as pre-compiled docker images from docker.io.
+
+The external libraries cache is not deleted or cleaned automatically. In order
+to clean the external libriary cache located in `/var/tmp/docker` invoke the 
+provided target:
+```bash
+make clean_external_cache
+```
 
 ## License
 The source code and the accompanying material is licensed under the terms of the [EPL v2](https://www.eclipse.org/legal/epl-2.0/).

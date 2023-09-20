@@ -19,8 +19,15 @@ you would like to build in the `.gitmodules` file.
 
 > **ℹ️ INFO:**
 > By default external libraries are not built. They are sourced as pre-compiled
-> docker images from docker.io. 
+> docker images from docker.io and saved to a local system wide cache in
+> /var/tmp. 
 
+The external libraries cache is not deleted or cleaned automatically. In order
+to clean the external library cache located in `/var/tmp/docker` invoke the 
+provided target:
+```bash
+make clean_cache
+```
 ## Getting Started
 Docker and Make are required
 
