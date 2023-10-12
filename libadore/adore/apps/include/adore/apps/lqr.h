@@ -48,15 +48,19 @@ namespace adore
         adore::fun::VehicleMotionState9d x;
         if(!x_reader_->hasData())return;
         x_reader_->getData(x);
-            //three_lanes_.update();
-            //auto current = three_lanes_.getCurrentLane(); 
-            //auto currentTraffic = current->getOnLaneTraffic() ; // other objects detected via sensors
-            std::cout<<"\n"<<x.getX()<<"\t"<<x.getY()<<"\t"<<x.getvx();
-            //give any <x,y> , for example of the leading vehicle, and get its s
-            //s is the progress along lane center
-            // difference between s gives you headway
-            //divide headway by velocity to get time-headway
-            //three_lanes_.getCurrentLane()->toRelativeCoordinates(input: current_X, input: current_y, output: s, output: n);
+        three_lanes_.update();
+        auto current = three_lanes_.getCurrentLane(); 
+        auto currentTraffic = current->getOnLaneTraffic() ; // other objects detected via sensors
+        auto ego_x = x.getX();
+        auto ego_y = x.getY();
+        auto ego_vx = x.getvx();
+        double ego_s, egp_d;
+        if( three_lanes_.getCurrentLane()!=nullptr   &&  three_lanes_.getCurrentLane()->isValid() )
+        {
+        three_lanes_.getCurrentLane()->toRelativeCoordinates(ego_x, ego_y, ego_s, egp_d);
+
+        }
+        
         }
                
 
