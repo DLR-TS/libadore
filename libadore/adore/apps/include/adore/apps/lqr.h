@@ -24,28 +24,15 @@
 #include <fstream>
 
 #include<nlohmann/json.hpp>
-
-using json = nlohmann::json;
-
 #include <bits/stdc++.h>
 #include <cstring>
 #include <arpa/inet.h>
 #include <unistd.h>
-//#include <mcm_dmove/MCM.h>
+#include <math.h>       /* atan */
+
+using json = nlohmann::json;
 
 
-#define QUOTE(...) #__VA_ARGS__
-
-
-#define QUOTE(...) #__VA_ARGS__
-const char *CONTRACTS_JSON_MESSAGE_FORMAT_STRING = QUOTE
-({ 
-  "Time":"%f",
-   "velocity":"%f",
-   "odometry":"%f"
-  
-  
-});
 
 
 namespace adore
@@ -94,6 +81,7 @@ namespace adore
             public:
         LQR(ros::NodeHandle* nh_)
         {   
+            //this->leading_s =  -100;;
             x_reader_ = adore::fun::FunFactoryInstance::get()->getVehicleMotionStateReader();   
             this->nh_= nh_;    
             nh_ = new ros::NodeHandle();
@@ -108,7 +96,7 @@ namespace adore
                 std::cout << "File deleted successfully." << std::endl;
             } 
             this->myfile.open ("ego_logs.csv");
-            this->myfile <<"Time, Velocity, distance\n";
+            this->myfile <<"Time, Velocity    ,  distance   , h_telda    ,    v_     ,    s_leading,    x     ,    y    \n";
             this->myfile.close();
 
             if (std::ifstream(filename1)) {
@@ -117,7 +105,7 @@ namespace adore
                 std::cout << "File deleted successfully." << std::endl;
             } 
             this->myfile.open ("leading_logs.csv");
-            this->myfile <<"Time, Velocity, distance\n";
+            this->myfile <<"Time    , Velocity   ,   distance,   x   , y   \n";
             this->myfile.close();
 
             // create socket instance for loging and connectivty with other applications, i.e plot juggler
@@ -145,37 +133,49 @@ namespace adore
             auto ego_vx = x.getvx();
             current_time = x.getTime();
 
+            double ego_theta =  atan((ego_x - 1000)/(ego_y-1000));
+
+           
+
+            // compute the ego vehicle states according to Optimal velocity model 
+            
+            
+                this->h_telda = (this->leading_s - this->ego_s)-this->h_star;
+                this->v_telda = ego_vx - this->v_star;
+                // compute the v_leader_telda
+                this->v_telda_leader = this-> vx_fm - this->v_star;
+
+
+            
+
+                //section 3.2.2 equation 3.25 
+                // OVM open loop (discrete model) , u = 0;
+                // The discrete time state space model is as the following , @ 10 hz rate 
+                // Ad = |0.9862   -0.0820| x |h_telda|
+                //      |0.2576    0.6583|   |v_telda|
+                // Bd = |-0.0044| x u_telda
+                //      |0.0820 | 
+                // Bd_1 =| .0908| x v_telda_leader
+                //       |.1778 |
+            
+                h_telda_next =  0.9862*h_telda + -0.0820 * v_telda + .0908*v_telda_leader;
+                v_telda_next =  0.2576*h_telda + 0.6583 * v_telda + .1778*v_telda_leader;
+                h_ = h_telda_next + h_star;
+                if(this->leading_s == 0)
+                    v_ = 0;
+                else 
+                    v_ = v_telda_next + v_star;// to be sent to the vehicle.
+            
             //writes time, velocity, x,y positions and progress on the ego_logs.csv file and on cout stream
             this->myfile.open ("ego_logs.csv",std::ios::app);
             three_lanes_1.update();
             //double ego_s represents the distance or progress of the vehicle 
             if( three_lanes_1.getCurrentLane()!=nullptr   &&  three_lanes_1.getCurrentLane()->isValid()){
                 three_lanes_1.getCurrentLane()->toRelativeCoordinates(ego_x, ego_y, this->ego_s, this->ego_d);
-                this->myfile <<current_time<<" ,"<<ego_vx<<", "<<this->ego_s<<"\n"; 
+                this->myfile <<current_time<<" ,"<<ego_vx<<",       "<<this->ego_s<<",      "<<this->h_telda<<",       "<<this->v_<<",      "<<this->leading_s<<",   "<<ego_x<<",   "<<ego_y<<"\n"; 
                 std::cout<<"Time "<<current_time<<", Ego vehicle      v = "<<ego_vx<<", x = "<<ego_x<<", y =  "<<ego_y<<", s = "<<this->ego_s<<"\n";   
             }
             this->myfile.close();
-
-            // compute the ego vehicle states according to Optimal velocity model 
-            this->h_telda = (this->leading_s - this->ego_s)-this->h_star;
-            this->v_telda = ego_vx - this->v_star;
-            // compute the v_leader_telda
-            this->v_telda_leader = this-> vx_fm - this->v_star;
-
-            //section 3.2.2 equation 3.25 
-            // OVM open loop (discrete model) , u = 0;
-            // The discrete time state space model is as the following , @ 10 hz rate 
-            // Ad = |0.9862   -0.0820| x |h_telda|
-            //      |0.2576    0.6583|   |v_telda|
-            // Bd = |-0.0044| x u_telda
-            //      |0.0820 | 
-            // Bd_1 =| .0908| x v_telda_leader
-            //       |.1778 |
-            
-            h_telda_next =  0.9862*h_telda + -0.0820 * v_telda + .0908*v_telda_leader;
-            v_telda_next =  0.2576*h_telda + 0.6583 * v_telda + .1778*v_telda_leader;
-            h_ = h_telda_next + h_star;
-            v_ = v_telda_next + v_star;// to be sent to the vehicle.
             
             //section 4.2 equation 4.28 
             // LQR controller of OVM closed loop (discrete model), u = -B*K 
@@ -228,11 +228,15 @@ namespace adore
             // Here, we stream the logs on Socket object as an json file
             nlohmann::json data1;
             data1["time"] = current_time;
-            data1["velocity0"] = ego_vx;
-            data1["distance0"] = this->ego_s;
-            data1["velocity1"] = this-> vx_fm;
-            data1["distance1"] = this->leading_s;
+            data1["velocity0"] = this-> vx_fm;
+            data1["distance0"] = this->leading_s;
+            data1["velocity1"] = ego_vx;
+            data1["distance1"] = this->ego_s;
             data1["OVM_velocity"] = v_;
+            data1["x_ego"] = ego_x;
+            data1["y_ego"] = ego_y;
+            data1["x_leader"] =this->x_fm;
+            data1["y_leader"] =this->y_fm;
 
             // Serialize the JSON data to a string.
             std::string jsonStr = data1.dump();
@@ -241,7 +245,7 @@ namespace adore
             strcpy(newJsonStr, jsonStr.c_str());
 
             char car_Jason_buffer[600];
-            sprintf(car_Jason_buffer, CONTRACTS_JSON_MESSAGE_FORMAT_STRING, current_time, ego_vx, this->ego_s);
+            //sprintf(car_Jason_buffer, CONTRACTS_JSON_MESSAGE_FORMAT_STRING, current_time, ego_vx, this->ego_s);
             ssize_t bytesSent = sendto(this->udpSocket, newJsonStr, strlen(newJsonStr), 0, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
 
 
@@ -265,7 +269,7 @@ namespace adore
 
                 three_lanes_2.getCurrentLane()->toRelativeCoordinates(this->x_fm, this->y_fm, this->leading_s, this->leading_d);
                 //this->myfile <<"Time "<<current_time<< ",Leading vehicle  v = "<<this-> vx_fm <<", x = "<<this->x_fm<<", y =  "<<this->y_fm<<" , s = "<<this->leading_s<<"\n";   
-                this->myfile <<current_time<<" ,"<<this-> vx_fm <<", "<<this->leading_s<<"\n"; 
+                this->myfile <<current_time<<" ,     "<<this-> vx_fm <<",       "<<this->leading_s<<"     "<<this->x_fm<<"    "<<this->y_fm<<"\n"; 
                 std::cout<<"Time "<<current_time<<" ,Leading vehicle  v = "<<this-> vx_fm <<", x = "<<this->x_fm<<", y =  "<<this->y_fm<<" , s = "<<this->leading_s<<"\n";   
             }
 
