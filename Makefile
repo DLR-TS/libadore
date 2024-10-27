@@ -37,7 +37,7 @@ build: clean set_env ## Build libadore
 	#docker compose build libadore_build
 
     #buildx bake required for builds behind proxy
-	docker buildx bake libadore_build
+	docker buildx bake --allow=network.host libadore_build
 	docker compose build libadore
 	docker compose build libadore_test
 	docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/${PROJECT}/build "${ROOT_DIR}/${PROJECT}"
